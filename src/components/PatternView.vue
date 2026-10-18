@@ -29,7 +29,6 @@ const reveal = (pattern: Pattern[]) => {
       clearInterval(interval);
 
       timeout = setTimeout(() => {
-        step.value = -1;
         emit("revealed");
       }, 2000);
     }
@@ -57,8 +56,6 @@ watch(() => props.patterns, reveal, {
     class="flex gap-4 h-16"
     enter-active-class="transition-opacity duration-500 ease-out"
     enter-from-class="opacity-0"
-    leave-active-class="transition-opacity duration-500 ease-in"
-    leave-to-class="opacity-0"
   >
     <div
       v-for="(pattern, index) in revealedPatterns"
