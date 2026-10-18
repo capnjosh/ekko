@@ -1,11 +1,17 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import GameLogo from "@/components/GameLogo.vue";
+import PatternView from "@/components/PatternView.vue";
+import UserPad from "@/components/UserPad.vue";
+
+import { useGame } from "@/composables/useGame";
+
+const { patterns, userPadEnabled, enableUserPad, validateUserAnswer } = useGame();
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <main class="bg-black text-white h-dvh flex flex-col items-center justify-center">
+    <GameLogo />
+    <PatternView class="my-12" :patterns="patterns" @revealed="enableUserPad()" />
+    <UserPad :enabled="userPadEnabled" @user-answered="validateUserAnswer" />
+  </main>
 </template>
-
-<style scoped></style>
