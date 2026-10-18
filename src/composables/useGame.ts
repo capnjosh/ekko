@@ -1,4 +1,4 @@
-import { computed, ref, readonly } from "vue";
+import { computed, ref, readonly, onScopeDispose } from "vue";
 
 import { generatePattern, type Pattern } from "@/lib/game";
 
@@ -16,6 +16,22 @@ export function useGame() {
     validateAtIndex.value = 0;
     phase.value = "start";
   };
+
+  let autoStartTimeout: ReturnType<typeof setTimeout> | undefined;
+
+  const autoStartRound = () => {
+    if (autoStartTimeout) {
+      clearTimeout(autoStartTimeout);
+    }
+
+    autoStartTimeout = setTimeout(startRound, 3000);
+  };
+
+  onScopeDispose(() => {
+    if (autoStartTimeout) {
+      clearTimeout(autoStartTimeout);
+    }
+  });
 
   const enableUserPad = () => {
     phase.value = "answering";
@@ -36,6 +52,7 @@ export function useGame() {
 
     if (!expected || pattern.id !== expected.id) {
       phase.value = "failed";
+      autoStartRound();
       return;
     }
 
@@ -43,6 +60,7 @@ export function useGame() {
 
     if (validateAtIndex.value === patterns.value.length) {
       phase.value = "success";
+      autoStartRound();
     }
   };
 
