@@ -1,50 +1,45 @@
-# ekko
+# Ekko
 
-## Project Setup
+A color memory game. Watch the pattern, then repeat it.
+
+**Play:** https://capnjosh.github.io/ekko/
+
+## How to play
+
+1. Watch the colors appear one at a time.
+2. When the pattern disappears, the pad unlocks.
+3. Press the colors in the same order.
+4. 😊 marks a correct press. 😭 marks a mistake and ends the round.
+5. A new round starts after 3 seconds.
+
+## Tech
+
+Vue 3, TypeScript, Vite, Tailwind CSS v4, Vitest, Playwright.
+
+## Development
+
+Requires Node `^22.18.0 || >=24.12.0` and pnpm.
 
 ```sh
 pnpm install
+pnpm dev          # start the dev server
+pnpm test:unit    # run unit tests
+pnpm test:e2e     # run end-to-end tests (first run: pnpm exec playwright install)
+pnpm lint         # lint and fix
+pnpm format       # format src/
+pnpm build        # type-check and build to dist/
 ```
 
-### Compile and Hot-Reload for Development
+## Project structure
 
-```sh
-pnpm dev
-```
+| Path                         | Contents                                  |
+| ---------------------------- | ----------------------------------------- |
+| `src/lib/game.ts`            | Colors and pattern generation             |
+| `src/composables/useGame.ts` | Game state: phases, answer checks, rounds |
+| `src/components/`            | UI: logo, pattern, answers, pad           |
+| `src/__tests__/`             | Unit tests                                |
+| `e2e/`                       | End-to-end tests                          |
 
-### Type-Check, Compile and Minify for Production
+## License
 
-```sh
-pnpm build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-pnpm test:unit
-```
-
-### Run End-to-End Tests with [Playwright](https://playwright.dev)
-
-```sh
-# Install browsers for the first run
-npx playwright install
-
-# When testing on CI, must build the project first
-pnpm build
-
-# Runs the end-to-end tests
-pnpm test:e2e
-# Runs the tests only on Chromium
-pnpm test:e2e --project=chromium
-# Runs the tests of a specific file
-pnpm test:e2e tests/example.spec.ts
-# Runs the tests in debug mode
-pnpm test:e2e --debug
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-pnpm lint
-```
+[MIT](LICENSE)
