@@ -1,3 +1,8 @@
+<script lang="ts">
+export const REVEAL_INTERVAL = 500;
+export const REVEAL_HOLD = 2000;
+</script>
+
 <script setup lang="ts">
 import { computed, ref, onWatcherCleanup, watch } from "vue";
 
@@ -30,9 +35,9 @@ const reveal = (pattern: Pattern[]) => {
 
       timeout = setTimeout(() => {
         emit("revealed");
-      }, 2000);
+      }, REVEAL_HOLD);
     }
-  }, 500);
+  }, REVEAL_INTERVAL);
 
   onWatcherCleanup(() => {
     if (interval) {
