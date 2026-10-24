@@ -64,8 +64,6 @@ export function useGame() {
     }
   };
 
-  startRound();
-
   return {
     patterns,
     userPattern,
@@ -73,5 +71,6 @@ export function useGame() {
     userPadEnabled,
     enableUserPad,
     validateUserAnswer,
+    startRound,
   };
 }
