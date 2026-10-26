@@ -1,8 +1,11 @@
 import { nextTick } from "vue";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { assert, afterEach, describe, expect, it, vi } from "vitest";
 import { enableAutoUnmount, mount } from "@vue/test-utils";
+import { createPinia } from "pinia";
 
-import { PATTERN_CONFIG } from "@/lib/game";
+import { PATTERN_CONFIG, type Pattern } from "@/lib/game";
+import { AUTO_START_DELAY } from "@/composables/useGame";
+import { useStatsStore } from "@/stores/stats";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -26,11 +29,22 @@ async function mountApp({ skipWelcomeModal = false }: { skipWelcomeModal?: boole
     localStorage.setItem(preventWelcomeModalKey, "true");
   }
 
-  const wrapper = mount(App);
+  const pinia = createPinia();
+  const wrapper = mount(App, {
+    global: {
+      plugins: [pinia],
+    },
+  });
   await nextTick();
 
   const welcomeModal = () => wrapper.findComponent(WelcomeModal);
   const userPad = () => wrapper.findComponent(UserPad);
+  const clickPatterns = async (patterns: Pattern[]) => {
+    for (const pattern of patterns) {
+      const button = userPad().get(`[aria-label="${pattern.name}"]`);
+      await button.trigger("click");
+    }
+  };
 
   return {
     wrapper,
@@ -42,6 +56,8 @@ async function mountApp({ skipWelcomeModal = false }: { skipWelcomeModal?: boole
       userPad()
         .findAll("button")
         .map((button) => button.element.disabled),
+    clickPatterns,
+    stats: useStatsStore(pinia),
   };
 }
 
@@ -100,5 +116,37 @@ describe("Game start", () => {
 
     await vi.advanceTimersByTimeAsync(offsetTime);
     expect(userPadButtonsDisabled()).toEqual(allUnlocked);
+  });
+});
+
+describe("Game stats", () => {
+  it("updates the stats", async () => {
+    vi.useFakeTimers();
+    const { patternView, clickPatterns, stats } = await mountApp({
+      skipWelcomeModal: true,
+    });
+    const patterns = patternView().props("patterns");
+    const totalTime = patterns.length * REVEAL_INTERVAL + REVEAL_HOLD;
+
+    await vi.advanceTimersByTimeAsync(totalTime);
+    expect(stats.rounds).toBe(1);
+
+    await clickPatterns(patterns);
+    expect(stats.successes).toBe(1);
+    expect(stats.failures).toBe(0);
+
+    await vi.advanceTimersByTimeAsync(AUTO_START_DELAY);
+    expect(stats.rounds).toBe(2);
+
+    const newPatterns = patternView().props("patterns");
+    const firstPattern = newPatterns[0];
+    assert(firstPattern);
+    const failedPattern = PATTERN_CONFIG.find((pattern) => pattern.id !== firstPattern.id);
+    assert(failedPattern);
+    await vi.advanceTimersByTimeAsync(totalTime);
+
+    await clickPatterns([failedPattern]);
+    expect(stats.successes).toBe(1);
+    expect(stats.failures).toBe(1);
   });
 });
