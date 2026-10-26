@@ -1,8 +1,11 @@
 import { computed, ref, readonly, onScopeDispose } from "vue";
 
 import { generatePattern, type Pattern } from "@/lib/game";
+import { useStatsStore } from "@/stores/stats";
 
 export type Phase = "start" | "answering" | "success" | "failed";
+
+export const AUTO_START_DELAY = 3000;
 
 export function useGame() {
   const patterns = ref<Pattern[]>([]);
@@ -10,11 +13,15 @@ export function useGame() {
   const validateAtIndex = ref(0);
   const phase = ref<Phase>("start");
 
+  const stats = useStatsStore();
+
   const startRound = () => {
     patterns.value = generatePattern();
     userPattern.value = [];
     validateAtIndex.value = 0;
     phase.value = "start";
+
+    stats.rounds++;
   };
 
   let autoStartTimeout: ReturnType<typeof setTimeout> | undefined;
@@ -24,7 +31,7 @@ export function useGame() {
       clearTimeout(autoStartTimeout);
     }
 
-    autoStartTimeout = setTimeout(startRound, 3000);
+    autoStartTimeout = setTimeout(startRound, AUTO_START_DELAY);
   };
 
   onScopeDispose(() => {
@@ -52,6 +59,7 @@ export function useGame() {
 
     if (!expected || pattern.id !== expected.id) {
       phase.value = "failed";
+      stats.failures++;
       autoStartRound();
       return;
     }
@@ -60,6 +68,7 @@ export function useGame() {
 
     if (validateAtIndex.value === patterns.value.length) {
       phase.value = "success";
+      stats.successes++;
       autoStartRound();
     }
   };
