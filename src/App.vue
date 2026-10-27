@@ -9,10 +9,10 @@ import { useLocalStorage } from "@vueuse/core";
 import { useGame } from "@/composables/useGame";
 
 import WelcomeModal from "@/components/WelcomeModal.vue";
-import SidePanel from "@/components/SidePanel.vue";
 import PatternView from "@/components/PatternView.vue";
 import PatternAnswers from "@/components/PatternAnswers.vue";
 import UserPad from "@/components/UserPad.vue";
+import QuickStats from "@/components/QuickStats.vue";
 
 const {
   patterns,
@@ -44,7 +44,7 @@ if (!welcomeOpen.value) {
 <template>
   <main class="bg-black text-white h-dvh flex flex-col items-center justify-center">
     <WelcomeModal :open="welcomeOpen" @start="startGame" />
-    <SidePanel :open="!welcomeOpen" />
+    <QuickStats />
     <div v-if="!welcomeOpen">
       <div class="my-12">
         <Transition
