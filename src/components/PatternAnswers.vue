@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Phase } from "@/composables/useGame";
 import type { Pattern } from "@/lib/game";
+import { Medal, Skull } from "@lucide/vue";
 
 defineProps<{
   phase: Phase;
@@ -16,10 +17,16 @@ defineProps<{
       :class="pattern.className"
       class="flex justify-center items-center w-16 h-full rounded-full"
     >
-      <span v-if="phase === 'failed' && index === patterns.length - 1" role="img" aria-label="Wrong"
-        >😭</span
+      <span
+        v-if="phase === 'failed' && index === patterns.length - 1"
+        role="img"
+        aria-label="Wrong"
       >
-      <span v-else role="img" aria-label="Correct">😊</span>
+        <Skull />
+      </span>
+      <span v-else role="img" aria-label="Correct">
+        <Medal />
+      </span>
     </div>
   </div>
 </template>
