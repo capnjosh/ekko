@@ -3,6 +3,7 @@ import { PATTERN_CONFIG, type Pattern } from "@/lib/game";
 
 defineProps<{
   enabled: boolean;
+  feedback?: string;
 }>();
 
 const emit = defineEmits<{
@@ -22,5 +23,16 @@ const emit = defineEmits<{
       class="w-16 h-full rounded-full disabled:opacity-50 enabled:cursor-pointer enabled:hover:brightness-90 enabled:active:brightness-75 enabled:active:scale-95 transition duration-100"
       @click="emit('userAnswered', pattern)"
     ></button>
+  </div>
+  <div role="status" class="flex items-center justify-center mt-8 text-gray-300 text-sm">
+    <Transition
+      mode="out-in"
+      enter-active-class="transition-opacity duration-200 ease-out"
+      enter-from-class="opacity-0"
+      leave-active-class="transition-opacity duration-200 ease-in"
+      leave-to-class="opacity-0"
+    >
+      <span :key="feedback">{{ feedback }}</span>
+    </Transition>
   </div>
 </template>
