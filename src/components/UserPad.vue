@@ -19,7 +19,7 @@ const emit = defineEmits<{
       :class="pattern.className"
       :aria-label="pattern.name"
       type="button"
-      class="w-16 h-full rounded-full disabled:opacity-50 enabled:cursor-pointer"
+      class="w-16 h-full rounded-full disabled:opacity-50 enabled:cursor-pointer enabled:hover:brightness-90 enabled:active:brightness-75 enabled:active:scale-95 transition duration-100"
       @click="emit('userAnswered', pattern)"
     ></button>
   </div>
