@@ -19,6 +19,7 @@ const {
   userPattern,
   phase,
   userPadEnabled,
+  feedback,
   enableUserPad,
   validateUserAnswer,
   startRound,
@@ -58,7 +59,7 @@ if (!welcomeOpen.value) {
           <PatternAnswers v-else :phase="phase" :patterns="userPattern" />
         </Transition>
       </div>
-      <UserPad :enabled="userPadEnabled" @user-answered="validateUserAnswer" />
+      <UserPad :enabled="userPadEnabled" :feedback="feedback" @user-answered="validateUserAnswer" />
     </div>
   </main>
 </template>

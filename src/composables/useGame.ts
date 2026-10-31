@@ -12,6 +12,7 @@ export function useGame() {
   const userPattern = ref<Pattern[]>([]);
   const validateAtIndex = ref(0);
   const phase = ref<Phase>("start");
+  const newRoundCountdown = `Starting new round in ${AUTO_START_DELAY / 1000}s`;
 
   const stats = useStatsStore();
 
@@ -20,7 +21,6 @@ export function useGame() {
     userPattern.value = [];
     validateAtIndex.value = 0;
     phase.value = "start";
-
     stats.rounds++;
   };
 
@@ -37,6 +37,21 @@ export function useGame() {
   onScopeDispose(() => {
     if (autoStartTimeout) {
       clearTimeout(autoStartTimeout);
+    }
+  });
+
+  const feedback = computed<string>(() => {
+    switch (phase.value) {
+      case "start":
+        return "Get ready!";
+      case "answering":
+        return "Your turn!";
+      case "success":
+        return `\\o/ ${newRoundCountdown}`;
+      case "failed":
+        return `:/ ${newRoundCountdown}`;
+      default:
+        return "";
     }
   });
 
@@ -78,6 +93,7 @@ export function useGame() {
     userPattern,
     phase: readonly(phase),
     userPadEnabled,
+    feedback,
     enableUserPad,
     validateUserAnswer,
     startRound,
